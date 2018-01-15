@@ -1,4 +1,4 @@
-from pyspark import SparkContext
+from pyspark import SparkContext,SparkConf
 from pyspark.sql.types import *
 from pyspark.sql.types import *
 from pyspark.sql import Row,SQLContext
@@ -8,11 +8,12 @@ from pyspark.ml.tuning import CrossValidator
 from pyspark.ml.tuning import ParamGridBuilder
 
 
-sc = SparkContext.getOrCreate()
+conf = SparkConf().setMaster("spark://ip-172-31-23-230.us-west-2.compute.internal:7077").setAppName("First_Attempt")
+sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
-path = '../data/'
+path = 'file:///root/Collaborative-Filtering/data/'
 data = sc.textFile(path+'reviews.csv',12).map(lambda x:x.split(','))
 header = data.first() #extract header
 ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
@@ -29,7 +30,7 @@ valid.cache()
 
 # coldstartStrategy will ensure that we have no nan value
 als = ALS(maxIter=10, regParam=0.001, userCol="userId",nonnegative=True
-          ,itemCol="businessId", ratingCol="rating",coldStartStrategy="drop", rank =10)
+          ,itemCol="businessId", ratingCol="rating", rank =10)
 model = als.fit(train)
 
 
@@ -39,7 +40,7 @@ evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
 rmse = evaluator.evaluate(pred_trn)
 print("RMSE of training data = " + str(rmse))
 
-pred_vld = model.transform(valid)
+pred_vld = model.transform(valid).na.drop("all",subset=['prediction'])
 rmse = evaluator.evaluate(pred_vld)
 print("RMSE of validation data = " + str(rmse))
 
@@ -49,11 +50,10 @@ print("RMSE of validation data = " + str(rmse))
 
 # We need to tune the parameters: maxIter, regParam,rank to achieve better results
 cv = CrossValidator().setEstimator(als).setEvaluator(evaluator).setNumFolds(5)
-paramGrid = ParamGridBuilder().addGrid(als.regParam,[0.001,0.01,0.005,0.05,0.1]).addGrid(model.rank,[8,10,12,14]).build()
-#setEstimatorParamMaps() takes ParamGridBuilder().
+paramGrid = ParamGridBuilder().addGrid(als.regParam,[0.001,0.01,0.005,0.05,0.1]).addGrid(als.rank,[8,10,12,14]).build()
 cv.setEstimatorParamMaps(paramGrid)
 cvmodel = cv.fit(train)
-print "Accuracy : " +  str(RegressionEvaluator().evaluate(cvmodel.bestModel.transform(valid)))
+print "RMSE : " +  str(evaluator.evaluate(cvmodel.bestModel.transform(valid).na.drop("all",subset=['prediction'])))
 
 
 # # Recommendations
