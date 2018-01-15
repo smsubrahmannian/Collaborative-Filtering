@@ -14,7 +14,7 @@ sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
 path = 'file:///root/Collaborative-Filtering/data/'
-data = sc.textFile(path+'reviews.csv',12).map(lambda x:x.split(','))
+data = sc.textFile(path+'reviews.csv',24).map(lambda x:x.split(','))
 header = data.first() #extract header
 ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
                                      rating=int(p[2])))
@@ -29,7 +29,7 @@ valid.cache()
 # # Model  Training
 
 # coldstartStrategy will ensure that we have no nan value
-als = ALS(maxIter=10, regParam=0.001, userCol="userId",nonnegative=True
+als = ALS(maxIter=10, regParam=1, userCol="userId",nonnegative=True
           ,itemCol="businessId", ratingCol="rating", rank =10)
 model = als.fit(train)
 
@@ -50,7 +50,7 @@ print("RMSE of validation data = " + str(rmse))
 
 # We need to tune the parameters: maxIter, regParam,rank to achieve better results
 cv = CrossValidator().setEstimator(als).setEvaluator(evaluator).setNumFolds(5)
-paramGrid = ParamGridBuilder().addGrid(als.regParam,[0.001,0.01,0.005,0.05,0.1]).addGrid(als.rank,[8,10,12,14]).build()
+paramGrid = ParamGridBuilder().addGrid(als.rank,[8,12,15,20]).build()
 cv.setEstimatorParamMaps(paramGrid)
 cvmodel = cv.fit(train)
 print "RMSE : " +  str(evaluator.evaluate(cvmodel.bestModel.transform(valid).na.drop("all",subset=['prediction'])))
@@ -60,12 +60,12 @@ print "RMSE : " +  str(evaluator.evaluate(cvmodel.bestModel.transform(valid).na.
 
 
 # Generate top 10 movie recommendations for each user
-userRecs = model.recommendForAllUsers(10)
+#userRecs = model.recommendForAllUsers(10)
 # Generate top 10 user recommendations for each movie
-movieRecs = model.recommendForAllItems(10)
+#movieRecs = model.recommendForAllItems(10)
 
 
 
-print userRecs.take(1)
-
-print movieRecs.take(1)
+#print userRecs.take(1)
+print cvmodel.bestModel.params
+#print movieRecs.take(1)
