@@ -6,7 +6,7 @@ from pyspark.ml.recommendation import ALS
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.tuning import CrossValidator
 from pyspark.ml.tuning import ParamGridBuilder
-
+import shutil
 
 conf = SparkConf().setMaster("spark://ip-172-31-23-230.us-west-2.compute.internal:7077").setAppName("First_Attempt")
 sc = SparkContext(conf=conf)
@@ -69,3 +69,9 @@ print "RMSE : " +  str(evaluator.evaluate(cvmodel.bestModel.transform(valid).na.
 #print userRecs.take(1)
 print cvmodel.bestModel.params
 #print movieRecs.take(1)
+
+try:
+    shutil.rmtree('./savedmodel/')
+except:
+    pass
+cvmodel.bestModel.save('./savedmodel')
