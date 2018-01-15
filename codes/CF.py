@@ -13,7 +13,7 @@ sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
 path = '../data/'
-data = sc.textFile(path+'reviews.csv',4).map(lambda x:x.split(','))
+data = sc.textFile(path+'reviews.csv',12).map(lambda x:x.split(','))
 header = data.first() #extract header
 ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
                                      rating=int(p[2])))
@@ -49,8 +49,11 @@ print("RMSE of validation data = " + str(rmse))
 
 # We need to tune the parameters: maxIter, regParam,rank to achieve better results
 cv = CrossValidator().setEstimator(als).setEvaluator(evaluator).setNumFolds(5)
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> c1775a18e37f591ad0dde00f567fb16833dcbcc1
 paramGrid = ParamGridBuilder().addGrid(als.regParam,[0.001,0.01,0.005,0.05,0.1]).addGrid(model.rank,[8,10,12,14]).build()
 #setEstimatorParamMaps() takes ParamGridBuilder().
 cv.setEstimatorParamMaps(paramGrid)
@@ -71,4 +74,3 @@ movieRecs = model.recommendForAllItems(10)
 print userRecs.take(1)
 
 print movieRecs.take(1)
-
