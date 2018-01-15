@@ -12,7 +12,7 @@ sc = SparkContext.getOrCreate()
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
-path = ../data/
+path = '../data/'
 data = sc.textFile(path+'reviews.csv',4).map(lambda x:x.split(','))
 header = data.first() #extract header
 ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
@@ -68,9 +68,6 @@ movieRecs = model.recommendForAllItems(10)
 
 
 print userRecs.take(1)
-
-
-# In[ ]:
 
 print movieRecs.take(1)
 
