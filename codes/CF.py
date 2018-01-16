@@ -8,12 +8,12 @@ from pyspark.ml.tuning import CrossValidator
 from pyspark.ml.tuning import ParamGridBuilder
 import shutil
 
-conf = SparkConf().setMaster("spark://ip-172-31-23-230.us-west-2.compute.internal:7077").setAppName("First_Attempt")
+conf = SparkConf()
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
-path = 'file:///root/Collaborative-Filtering/data/'
+path = '///home/hadoop/Collaborative-Filtering/data/'
 data = sc.textFile(path+'reviews.csv',24).map(lambda x:x.split(','))
 header = data.first() #extract header
 ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
