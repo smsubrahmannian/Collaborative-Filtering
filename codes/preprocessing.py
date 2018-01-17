@@ -40,7 +40,7 @@ ALS_baseline_df = df_review.select('user_ix','biz_ix','stars')
 userMap.write.parquet("s3://dknsyelp/userMap.parquet", mode='overwrite')
 bizMap.write.parquet("s3://dknsyelp/bizMap.parquet", mode='overwrite')
 ALS_baseline_df.write.parquet("s3://dknsyelp/ALS_baseline.parquet", mode='overwrite')
-review_df.write.parquet("s3://dknsyelp/review.parquet", mode='overwrite')
+df_review.write.parquet("s3://dknsyelp/review.parquet", mode='overwrite')
 
 print 'Successful'
 

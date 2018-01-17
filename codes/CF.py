@@ -13,8 +13,14 @@ sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
+# Loads parquet file located in AWS S3 into RDD Data Frame
+parquetFile = sqlContext.read.parquet("s3://dknsyelp/ALS_baseline.parquet")
 
-ratings = sqlContext.sql('SELECT * FROM ALS_baseline')
+# Stores the DataFrame into an "in-memory temporary table"
+parquetFile.registerTempTable("parquetFile")
+
+# Run standard SQL queries against temporary table
+ratings = sqlContext.sql("SELECT * FROM parquetFile")
 train,valid = ratings.randomSplit([0.8,0.2])
 train.cache()
 valid.cache()
