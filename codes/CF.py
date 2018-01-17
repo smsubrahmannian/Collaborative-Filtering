@@ -13,15 +13,9 @@ sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
-path = '///home/hadoop/Collaborative-Filtering/data/'
-data = sc.textFile(path+'reviews.csv',24).map(lambda x:x.split(','))
-header = data.first() #extract header
-ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
-                                     rating=int(p[2])))
-ratings = sqlContext.createDataFrame(ratingsRDD)
+
+ratings = sqlContext.sql('SELECT * FROM ALS_baseline')
 train,valid = ratings.randomSplit([0.8,0.2])
-
-
 train.cache()
 valid.cache()
 
@@ -29,13 +23,13 @@ valid.cache()
 # # Model  Training
 
 # coldstartStrategy will ensure that we have no nan value
-als = ALS(maxIter=10, regParam=1, userCol="userId",nonnegative=True
-          ,itemCol="businessId", ratingCol="rating", rank =10)
+als = ALS(maxIter=10, regParam=1, userCol="user_ix",nonnegative=True
+          ,itemCol="biz_ix", ratingCol="stars", rank =10)
 model = als.fit(train)
 
 
 pred_trn = model.transform(train)
-evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
+evaluator = RegressionEvaluator(metricName="rmse", labelCol="stars",
                                 predictionCol="prediction")
 rmse = evaluator.evaluate(pred_trn)
 print("RMSE of training data = " + str(rmse))
