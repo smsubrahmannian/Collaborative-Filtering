@@ -4,7 +4,7 @@ from pyspark.sql import SQLContext
 from pyspark.sql.functions import monotonically_increasing_id
 import sys
 
-ip_address = sys.argv[1]
+ip_address = '54.245.171.238'
 #Create SparkContext
 conf = SparkConf()
 sc = SparkContext(conf = conf)
@@ -37,27 +37,13 @@ ALS_baseline_df = df_review.select('user_ix','biz_ix','stars')
 
 ## drop and Save table
 
-try:
-    sqlContext.sql('drop table userMap')
-except:
-    pass
+userMap.write.parquet("s3://dknsyelp/userMap.parquet", mode='overwrite')
+bizMap.write.parquet("s3://dknsyelp/bizMap.parquet", mode='overwrite')
+ALS_baseline_df.write.parquet("s3://dknsyelp/ALS_baseline.parquet", mode='overwrite')
+review_df.write.parquet("s3://dknsyelp/review.parquet", mode='overwrite')
 
-try:
-    sqlContext.sql('drop table bizMap')
-except:
-    pass
+print 'Successful'
 
-try:
-    sqlContext.sql('drop table ALS_baseline')
-except:
-    pass
-
-userMap.write.saveAsTable('userMap')
-bizMap.write.saveAsTable('bizMap')
-ALS_baseline_df.write.saveAsTable('ALS_baseline')
-
-
-
-
+ALS_baseline_df.show()
 
 
