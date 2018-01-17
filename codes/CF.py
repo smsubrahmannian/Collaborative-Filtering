@@ -13,15 +13,8 @@ sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
-path = '///home/hadoop/Collaborative-Filtering/data/'
-data = sc.textFile(path+'reviews.csv',24).map(lambda x:x.split(','))
-header = data.first() #extract header
-ratingsRDD = data.filter(lambda row: row != header).map(lambda p: Row(userId=int(p[0]), businessId=int(p[1]),
-                                     rating=int(p[2])))
-ratings = sqlContext.createDataFrame(ratingsRDD)
 
-ratings = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").option("uri","mongodb://54.202.177.212/yelp.review").load()
-ratings = ratings.select('user_id','business_id','stars')
+ratings = sqlContext.sql('SELECT * FROM ALS_baseline')
 train,valid = ratings.randomSplit([0.8,0.2])
 train.cache()
 valid.cache()
@@ -30,8 +23,8 @@ valid.cache()
 # # Model  Training
 
 # coldstartStrategy will ensure that we have no nan value
-als = ALS(maxIter=10, regParam=1, userCol="user_id",nonnegative=True
-          ,itemCol="business_id", ratingCol="stars", rank =10)
+als = ALS(maxIter=10, regParam=1, userCol="user_ix",nonnegative=True
+          ,itemCol="biz_ix", ratingCol="stars", rank =10)
 model = als.fit(train)
 
 
