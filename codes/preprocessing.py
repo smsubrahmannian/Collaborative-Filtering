@@ -35,29 +35,14 @@ df_review = df_review.select('user_id','business_id','stars')
 df_review = df_review.join(userMap,on='user_id',how='left_outer').join(bizMap,on='business_id',how='left_outer')
 ALS_baseline_df = df_review.select('user_ix','biz_ix','stars')
 
-## drop and Save table
+##Save table
 
-try:
-    sqlContext.sql('drop table userMap')
-except:
-    pass
 
-try:
-    sqlContext.sql('drop table bizMap')
-except:
-    pass
-
-try:
-    sqlContext.sql('drop table ALS_baseline')
-except:
-    pass
-
-userMap.write.saveAsTable('userMap')
-bizMap.write.saveAsTable('bizMap')
-ALS_baseline_df.write.saveAsTable('ALS_baseline')
+userMap.write.parquet("s3://dknsyelp/userMap.parquet", mode='overwrite')
+bizMap.write.parquet("s3://dknsyelp/bizMap.parquet", mode='overwrite')
+ALS_baseline_df.write.parquet("s3://dknsyelp/ALS_baseline.parquet", mode='overwrite')
 
 
 
 
-
-
+spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.11:2.2.0 --master yarn  --driver-memory 45G --driver-cores 4 --executor-cores 4 --executor-memory 45G preprocessing.py > /home/sooraj/preprocess_out.txt
