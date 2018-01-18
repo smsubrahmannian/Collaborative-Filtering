@@ -5,11 +5,6 @@ from pyspark.ml.classification import NaiveBayes
 from pyspark.ml.feature import CountVectorizer, Tokenizer, StringIndexer
 from pyspark.ml import Pipeline
 from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator
-
-from pyspark.ml.recommendation import ALS
-from pyspark.ml.evaluation import RegressionEvaluator
-from pyspark.ml.tuning import CrossValidator
-from pyspark.ml.tuning import ParamGridBuilder
 from pyspark.sql.functions import countDistinct, udf, col
 
 
@@ -20,11 +15,22 @@ sqlContext = SQLContext(sc)
 
 
 # Load data from mongo
-df_tip = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").\
-option("uri","mongodb://54.245.171.238/yelp.tip").load()
-df_review = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").\
-option("uri","mongodb://54.245.171.238/yelp.review").load()
+# df_tip = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").\
+# option("uri","mongodb://54.245.171.238/yelp.tip").load()
+# df_review = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").\
+# option("uri","mongodb://54.245.171.238/yelp.review").load()
 
+
+# Loads parquet file located in AWS S3 into RDD Data Frame
+parquetFileTip = sqlContext.read.parquet("s3://dknsyelp/tip.parquet")
+# Stores the DataFrame into an "in-memory temporary table"
+parquetFileTip.registerTempTable("parquetFileTip")
+# Run standard SQL queries against temporary table
+df_tip = sqlContext.sql("SELECT * FROM parquetFileTip")
+
+parquetFileReview = sqlContext.read.parquet("s3://dknsyelp/review.parquet")
+parquetFileReview.registerTempTable("parquetFileReview")
+df_review = sqlContext.sql("SELECT * FROM parquetFileReview")
 
 # Clean data
 df_review = df_review.select(df_review['text'], df_review['stars']).dropDuplicates()
