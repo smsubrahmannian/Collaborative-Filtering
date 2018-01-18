@@ -1,10 +1,10 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.sql.types import *
 from pyspark.sql import SQLContext
-from pyspark.sql.functions import monotonically_increasing_id
+from pyspark.ml.feature import StringIndexer
 import sys
 
-ip_address = '54.245.171.238'
+ip_address = '34.216.245.110'
 #Create SparkContext
 conf = SparkConf()
 sc = SparkContext(conf = conf)
@@ -22,10 +22,12 @@ df_tip.persist()
 ## Mapping
 
 userMap = df_review.select('user_id').union(df_tip.select('user_id')).distinct()
-userMap = userMap.withColumn("user_ix", monotonically_increasing_id())
+indexer_userid = StringIndexer(inputCol="user_id", outputCol="user_ix")
+userMap = indexer_userid.fit(userMap).transform(userMap)
 
 bizMap = df_review.select('business_id').union(df_tip.select('business_id')).distinct()
-bizMap = bizMap.withColumn("biz_ix", monotonically_increasing_id())
+indexer_biz = StringIndexer(inputCol="business_id", outputCol="biz_ix")
+bizMap = indexer_biz .fit(bizMap).transform(bizMap)
 
 
 
