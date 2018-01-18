@@ -19,16 +19,11 @@ from bokeh.plotting import figure, show, output_notebook
 from bokeh.plotting import figure, output_file, save
 
 
-conf = SparkConf()
-sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 
 
 
-conf = SparkConf()
-sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
 
 # Data pre-processing in Spark
 # Loads parquet file located in AWS S3 into RDD Data Frame
@@ -47,8 +42,8 @@ valid.cache()
 # # Model  Training
 
 # coldstartStrategy will ensure that we have no nan value
-als = ALS(maxIter=10, regParam=1, userCol="user_ix",nonnegative=True
-          ,itemCol="biz_ix", ratingCol="stars", rank =10)
+als = ALS(maxIter=50, regParam=1, userCol="user_ix",nonnegative=True
+          ,itemCol="biz_ix", ratingCol="stars", rank =8)
 
 model = als.fit(ratings)
 
@@ -80,5 +75,5 @@ plot = bp.figure(plot_width=700, plot_height=600, title="Clustering of the resta
 
 plot.scatter(x=X_tsne[:,0] , y=X_tsne[:,1])
 hover = plot.select(dict(type=HoverTool))
-hover.tooltips={"description":"@a.select('id')" }
+#hover.tooltips={"description":"@a.select('id')" }
 show(plot)
