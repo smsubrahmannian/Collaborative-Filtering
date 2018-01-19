@@ -50,7 +50,7 @@ for i in range_iter:
 plt.ylabel('RMSE')
 plt.xlabel('Iterations')
 plt.plot(range_iter,l)
-plt.savefig('RMSE_Iterations.png')
+plt.savefig("s3://dknsyelp/RMSE_Iterations.png")
 
 #Rmse v/s Data_percentage
 
@@ -71,7 +71,7 @@ for i in data_iter:
 plt.ylabel('RMSE')
 plt.xlabel('Ratings')
 plt.plot(data_iter,l)
-plt.savefig('Rmse_ratings.png')
+plt.savefig("s3://dknsyelp/Rmse_ratings.png")
 
 #TIme v/s Data_percentage
 
@@ -93,7 +93,7 @@ plt.ylabel('Time')
 plt.xlabel('Ratings')
 plt.plot(data_iter,l)
 
-plt.savefig('Time_ratings.png')
+plt.savefig("s3://dknsyelp/Time_ratings.png")
 
 
 
