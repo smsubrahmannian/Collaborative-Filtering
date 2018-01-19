@@ -1,12 +1,4 @@
-from pyspark import SparkContext,SparkConf
-from pyspark.sql.types import *
-from pyspark.sql import Row,SQLContext
-from pyspark.ml.classification import NaiveBayes
-from pyspark.ml.feature import CountVectorizer, Tokenizer, StringIndexer, \
-    NGram, VectorAssembler
-from pyspark.ml import Pipeline
-from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator
-from pyspark.sql.functions import countDistinct, udf, col
+git p
 
 
 # Create SparkContext
