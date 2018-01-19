@@ -1,0 +1,34 @@
+MongoDB shell version v3.6.2
+connecting to: mongodb://127.0.0.1:27017/yelp
+MongoDB server version: 3.6.2
+Variety: A MongoDB Schema Analyzer
+Version 1.5.0, released 14 May 2015
+Using collection of "review"
+Using query of { }
+Using limit of 4736897
+Using maxDepth of 99
+Using sort of { "_id" : -1 }
+Using outputFormat of "ascii"
+Using persistResults of false
+Using resultsDatabase of "varietyResults"
+Using resultsCollection of "reviewKeys"
+Using resultsUser of null
+Using resultsPass of null
+Using logKeysContinuously of false
+Using excludeSubkeys of [ ]
+Using arrayEscape of "XX"
+Using plugins of [ ]
++-------------------------------------------------+
+| key         | types    | occurrences | percents |
+| ----------- | -------- | ----------- | -------- |
+| _id         | ObjectId |     4736897 |    100.0 |
+| business_id | String   |     4736897 |    100.0 |
+| cool        | Number   |     4736897 |    100.0 |
+| date        | String   |     4736897 |    100.0 |
+| funny       | Number   |     4736897 |    100.0 |
+| review_id   | String   |     4736897 |    100.0 |
+| stars       | Number   |     4736897 |    100.0 |
+| text        | String   |     4736897 |    100.0 |
+| useful      | Number   |     4736897 |    100.0 |
+| user_id     | String   |     4736897 |    100.0 |
++-------------------------------------------------+

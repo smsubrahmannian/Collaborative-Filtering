@@ -28,6 +28,16 @@ df_review = sqlContext.sql("SELECT * FROM parquetFileReview")
 
 # Clean data
 df_review = df_review.select(df_review['text'], df_review['stars']).dropDuplicates()
+# Replace all punctuation
+import string
+import re
+to_remove = string.punctuation + '0-9\\r\\t\\n'
+to_remove = r"[{}]".format(to_remove)       # correct format for regex
+my_regex = re.compile(to_remove)
+# Replace instances of every element in to_remove with empty string
+text_clean = udf(lambda text: my_regex.sub('', text))
+df_review = df_review.withColumn('clean_text', text_clean(col('text')))\
+    .drop('text').withColumnRenamed("clean_text", "text").cache()
 
 # Display counts of reviews by stars
 print 'counts of reviews by stars:'
@@ -39,16 +49,6 @@ df_review = df_review.withColumn('label', binning_udf(col('stars')))
 # convert label to integer type
 df_review = df_review.withColumn("label", df_review["label"]\
                                  .cast(IntegerType())).drop('stars')
-# Replace all punctuation
-import string
-import re
-to_remove = string.punctuation + '0-9\\r\\t\\n'
-to_remove = r"[{}]".format(to_remove)       # correct format for regex
-my_regex = re.compile(to_remove)
-# Replace instances of every element in to_remove with empty string
-text_clean = udf(lambda text: my_regex.sub('', text))
-df_review = df_review.withColumn('clean_text', text_clean(col('text')))\
-    .drop('text').withColumnRenamed("clean_text", "text").cache()
 
 
 # Split into training and validation sets
@@ -78,13 +78,13 @@ preds_valid = model.transform(valid_data)
 # with text_clean: 0.607
 # with text_clean + build_ngrams(n=2): 0.612
 bceval = BinaryClassificationEvaluator()
-print (bceval.getMetricName() +":" + str(round(bceval.evaluate(preds_valid)), 3))
+print bceval.getMetricName() +":" + str(round(bceval.evaluate(preds_valid), 3))
 
 #Evaluate the model. metric : Area Under PR...... areaUnderPR:0.732
 # with text_clean: 0.728
 # with text_clean + build_ngrams(n=2): 0.729
 bceval.setMetricName("areaUnderPR")
-print (bceval.getMetricName() +":" + str(round(bceval.evaluate(preds_valid)), 3))
+print bceval.getMetricName() +":" + str(round(bceval.evaluate(preds_valid), 3))
 
 #Evaluate the model. metric : F1 score...... f1:0.865
 # with text_clean: 0.858
