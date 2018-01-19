@@ -1,0 +1,12 @@
+attributes.RestaurantsPriceRange2            | Number                   |       96355 |  61.51405460964382854 |
+attributes.RestaurantsTakeOut                | Boolean                  |       54648 |  34.88786317583743823 |
+attributes.RestaurantsGoodForGroups          | Boolean                  |       49628 |  31.68304189888852562 |
+attributes.RestaurantsDelivery               | Boolean                  |       46803 |  29.87953191733859271 |
+attributes.RestaurantsReservations           | Boolean                  |       46523 |  29.70077694571594407 |
+attributes.RestaurantsAttire                 | String                   |       44813 |  28.60909479759191498 |
+attributes.GoodForMeal                       | Object                   |       42952 |  27.42101264691424234 |
+attributes.RestaurantsTableService           | Boolean                  |       39961 |  25.51152650361659724 |
+attributes.DogsAllowed                       | Boolean                  |       11214 |   7.15913661348706221 |
+attributes.HappyHour                         | Boolean                  |        8416 |   5.37286371848645583 |
+attributes.DriveThru                         | Boolean                  |        6040 |   3.85600010214569799 |
+attributes.RestaurantsCounterService         | Boolean                  |         396 |   0.25281060272345968 |
