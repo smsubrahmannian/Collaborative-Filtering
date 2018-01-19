@@ -4,7 +4,7 @@ from pyspark.sql import SQLContext
 from pyspark.ml.feature import StringIndexer
 import sys
 
-ip_address = '54-214-104-75'
+ip_address = '54.214.104.75'
 #Create SparkContext
 conf = SparkConf()
 sc = SparkContext(conf = conf)
