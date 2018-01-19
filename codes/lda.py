@@ -5,7 +5,7 @@ from pyspark.ml.feature import HashingTF, IDF, Tokenizer
 from pyspark.sql.functions import countDistinct, udf, col
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import udf
-from pyspark.ml.clustering import LDA
+from pyspark.ml.clustering import LDA,LDAModel
 import re
 
 conf = SparkConf()
@@ -77,7 +77,7 @@ TFIDF_Data = idfModel.transform(featurizedData)  # TFIDF
 # "em" = expectation-maximization
 TFIDF_Data.persist()
 
-lda = LDA(k=50, seed=22, optimizer="em", featuresCol="features")
+lda = LDA(k=50, seed=22, optimizer="em", featuresCol="features",maxIterations =50)
 ldamodel = lda.fit(TFIDF_Data)
 
 
@@ -85,3 +85,5 @@ ldatopics = ldamodel.describeTopics()
 ldamodel.save("s3://dknsyelp/ldamodel")
 # Show the top 25 Topics
 ldatopics.show(25)
+
+ldamodel = LDAModel.load('s3://dknsyelp/ldamodel')
